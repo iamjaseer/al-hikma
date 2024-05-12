@@ -14,7 +14,7 @@ const nextConfig = {
         return config
       },
 
-    reactStrictMode: true,
+      reactStrictMode: false,
    // pageExtensions: ["page.jsx", "api.ts", "page.ts"],
 
 

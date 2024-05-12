@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  font-family: "Noto Sans Malayalam", sans-serif;
+}
+
+.number * {
+  font-family: "Roboto", sans-serif !important;
+}
+
+main {
+  max-width: 575px;
+  margin: 0 auto;
+}
+
+.bg-primary {
+  background: url("../images/bg.jpg");
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: cover;
+}
+
+.bg-white-custom {
+  background: url("../images/bg-white.jpg");
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: cover;
+}
+
+.btn-menue {
+  background-size: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none' viewBox='0 0 28 28'%3E%3Cpath fill='%231C208F' fill-rule='evenodd' d='M7.875 20.125a.875.875 0 0 1 .875-.875h17.5a.875.875 0 1 1 0 1.75H8.75a.875.875 0 0 1-.875-.875Zm-3.5-7a.875.875 0 0 1 .875-.875h17.5a.875.875 0 1 1 0 1.75H5.25a.875.875 0 0 1-.875-.875Zm-3.5-7a.875.875 0 0 1 .875-.875h17.5a.875.875 0 1 1 0 1.75H1.75a.875.875 0 0 1-.875-.875Z' clip-rule='evenodd'/%3E%3C/svg%3E%0A");
+}
+
+.btn-menue-close {
+  background-size: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 16 16'%3E%3Cpath fill='%23fff' d='M.683 1.567a.626.626 0 0 1 .885-.885L8 7.116 14.433.682a.626.626 0 1 1 .885.885L8.884 8l6.434 6.432a.625.625 0 1 1-.885.886L8 8.884l-6.432 6.434a.627.627 0 0 1-.885-.886L7.116 8 .683 1.567Z'/%3E%3C/svg%3E%0A");
+}
+
+div:where(.swal2-container) {
+  padding: 0;
+}
+
+div:where(.swal2-container) div:where(.swal2-popup) {
+  border-radius: 10px;
+}
+
+.swal2-title {
+  font-size: 22px;
+  text-align: left !important;
+  padding: 20px 30px 0 24px !important;
+}
+
+.swal2-html-container {
+  text-align: left !important;
+  padding: 0 !important;
+  margin: 8px 24px 0px 24px !important;
+}
+
+.swal2-actions {
+  width: 100% !important;
+  padding: 0 22px 0 24px;
+}
+.swal2-actions button {
+  width: 100% !important;
+}

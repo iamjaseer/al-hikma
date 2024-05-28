@@ -7,6 +7,8 @@ import { db } from "../firebase/config"
 import { collection, getDocs, query, where } from "firebase/firestore"
 import { useRouteGuardContext } from "../Context/RouteGuardContext";
 import Link from "next/link";
+import { useProfileContext } from "../Context/profileContext";
+
 
 
 export default function AdminDashboard() {
@@ -15,6 +17,8 @@ export default function AdminDashboard() {
 
   //CONTEXT
   const { loginUser } = useUserContext()
+  const { profile} = useProfileContext()
+
   const { loading, setLoading } = useRouteGuardContext()
 
   //FIREBASE DB
@@ -23,9 +27,12 @@ export default function AdminDashboard() {
 
 
   //STATES
-  const [profile, setProfile] = useState()
+  // const [profile, setProfile] = useState()
   const [userData, setUserData] = useState('')
   const [leave, setLeave] = useState([])
+
+
+
 
 
   useEffect(() => {
@@ -49,28 +56,28 @@ export default function AdminDashboard() {
 
 
     //USER PROFILE DATA BY LOGINED USER ID
-    const getProfile = async () => {
-      try {
+    // const getProfile = async () => {
+    //   try {
 
-        const data = await getDocs(query(teachersCollectionRef, where('userId', '==', loginUser.uid)))
+    //     const data = await getDocs(query(teachersCollectionRef, where('userId', '==', loginUser.uid)))
 
-        const filteredData = data.docs.map((doc) => (
-          {
-            ...doc.data(),
-            id: doc.id
-          }
-        ))
-        setProfile(filteredData)
+    //     const filteredData = data.docs.map((doc) => (
+    //       {
+    //         ...doc.data(),
+    //         id: doc.id
+    //       }
+    //     ))
+    //     setProfile(filteredData)
 
         
-        //setLoading(false)
+    //     //setLoading(false)
 
 
 
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
+    //   } catch (error) {
+    //     console.error('Error fetching data:', error);
+    //   }
+    // }
 
 
     //GT ALL leave
@@ -101,19 +108,20 @@ export default function AdminDashboard() {
   
     getLeaveList()
     activeUser()
-    getProfile()
+
   }, [loginUser]);
 
 
 
-
+console.log(profile)
 
   //TESTING
 //console.log(userInfoStatus)
 
   return (
     <>
-
+{profile}
+fsdf
       {!loading && <div className="h-screen flex items-center justify-center" role="status">
         <svg aria-hidden="true" class="inline w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-sky-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />

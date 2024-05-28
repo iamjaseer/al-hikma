@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState } from "react";
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { useProfileContext } from "./profileContext";
 
 
 const UserContext = createContext({})
@@ -10,6 +11,8 @@ const UserContext = createContext({})
 
 export const UserContextProvider =  ({ children }) => {
 
+
+  
 
     const [loginUser, setLoginUser] = useState()
 
@@ -22,7 +25,7 @@ export const UserContextProvider =  ({ children }) => {
 
 
         setLoginUser(user)
-
+       
   
 
         // if (user) {
@@ -37,7 +40,7 @@ export const UserContextProvider =  ({ children }) => {
 
    
 
- 
+    
       
 
   

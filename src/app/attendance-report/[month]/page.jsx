@@ -6,6 +6,8 @@ import { useRouteGuardContext } from "../../Context/RouteGuardContext"
 import { db } from "../../firebase/config"
 import { useUserContext } from "../../Context/userContext"
 import { useEffect, useState } from "react"
+import { useTeacherContext } from "../../Context/profileContext"
+
 
 
 
@@ -15,14 +17,16 @@ export default function AttendanceView({ params }) {
 
 
 
-
     //CONTEXT
     const { loading, setLoading } = useRouteGuardContext()
     const { loginUser } = useUserContext()
 
+
     //STATES
     const [getAttendance, setGetAttendance] = useState([])
     const [getHolidays, setGetHolidays] = useState([])
+    const [profile, setProfile] = useState([])
+    const [totalSalary, setTotalSalary] = useState(0)
 
     //FIREBASE DB
     // const attendanceReportCollectionRef =  collection(db, `attendance-user-${loginUser.uid}-month-${new Date().getMonth() + 1}-year-${new Date().getFullYear()}`, where('month' == 5))
@@ -31,13 +35,9 @@ export default function AttendanceView({ params }) {
 
 
 
-
-
-
-
     //PRINT DAYS BY MONTH NUMBER
 
-    const allDays = () => {
+    const attendanceTable = (holidays) => {
 
 
 
@@ -45,31 +45,104 @@ export default function AttendanceView({ params }) {
             return new Date(year, month, 0).getDate();
         };
 
-    
+
+
+
+        //     holidays.map((item) => {
+        //    console.log(item)
+        //     });
+
+        //console.log(getAttendance)
+
+
+        const splitDay = ('2024-05-30', '2024-05-31', '2024-05-28', '2024-05-27').split("-")
+
+        function removeLeadingZerosRegex(str) {
+            return str.replace(/^0+(?=\d)/, '');
+        }
+
+
+        //WORKING TIME START AND END
+        const startTime = 7
+        const endTime = 8
+
+
 
         const days = [];
 
-        for (let i = 0; i < getDaysInMonth(new Date().getMonth() + 1, new Date().getFullYear()); i++) {
-            days.push(
-                <li className="flex justify-start items-center gap-5">
-                    <span className="bg-sky-400 border border-sky-400 text-white rounded-full p-2 w-10 h-9 flex justify-center">{i+1}</span>
-                    <span className="flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-blue-800 font-semibold">
-                        <span>
-                            IN 7.02
-                        </span>
-                        <span>
-                            OUT 8.35
-                        </span>
-                    </span>
-                </li>
-            )
+        //for (let i = 0; i < getDaysInMonth(new Date().getMonth() + 1, new Date().getFullYear()); i++) {
+        // days.push(
+        //     <li className="flex justify-start items-center gap-5">
+        //         <span className="bg-sky-400 border border-sky-400 text-white rounded-full p-2 w-10 h-9 flex justify-center">{i+1}</span>
+        //         <span className="flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-blue-800 font-semibold">
+        //             <span>
+        //                 IN 7.02 {i++ == removeLeadingZerosRegex(splitDay[2]) ? 'yes' : 'no'}
+        //             </span>
+        //             <span>
+        //                 OUT 8.35
+        //             </span>
+        //         </span>
+        //     </li>
+        // )
 
-        }
+        const mergedArray = [...holidays, ...getAttendance];
+
+
+        days.push(
+
+
+            (mergedArray).map((item, key) => (
+
+                <>
+
+                    <li className="flex justify-start items-center gap-5" key={key}>
+
+                        {item.reason && <span className="bg-white border-blue-800 border text-blue-800 rounded-full p-2 w-10 h-9 flex justify-center">{item.date.substring(item.date.indexOf("-") + 4)}</span>}
+                        {!item.reason ? <span className={startTime < item.punchIn || endTime > item.punchOut ? 'bg-yellow-400 border border-yellow-400 text-white rounded-full p-2 w-10 h-9 flex justify-center' : 'bg-sky-400 border border-sky-400 text-white rounded-full p-2 w-10 h-9 flex justify-center'}>
+                            {item.day}
+                        </span>
+                            :
+                            null
+                        }
+                        {item.reason && <span className="flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-blue-800 font-semibold">
+                            <span>
+                                HOLIDAY - {item.reason}
+                            </span>
+                        </span>
+                        }
+
+                        {!item.reason ? <span className={startTime < item.punchIn || endTime > item.punchOut ? 'flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-yellow-400 font-semibold' : 'flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-sky-400 font-semibold'}>
+                            <span>
+                                IN {item.punchIn} {startTime < item.punchIn ? '- LPU' : null}
+                            </span>
+                            <span>
+                                OUT {item.punchOut} {endTime > item.punchOut ? '- EPO' : null}
+                            </span>
+                        </span>
+                            :
+                            null
+                        }
+
+                        {/* <span className="flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-red-500 font-semibold">
+                                        <span>
+
+
+
+                                            {item.day}<br/>
+                                            {new Date().getDate()-1}<br/>
+                                            ABSENT
+                                        </span>
+                                    </span> */}
+
+                    </li>
+                </>
+            ))
+        )
+
         return days;
 
-      
-
     }
+
 
 
 
@@ -123,27 +196,78 @@ export default function AttendanceView({ params }) {
     useEffect(() => {
 
 
+
+        //CALCULATE SALARY
+
+        (async () => {
+            try {
+               
+
+                    const perDay = await profile[0].salary/30
+                    setTotalSalary(perDay)
+                
+                
+
+
+            } catch (err) {
+                console.log('error')
+                console.log(err)
+            }
+        })();
+
+
+
+
+        //PROFILE
+        (async () => {
+            try {
+
+                
+
+                const teachersCollectionRef = await query(collection(db, `teachers`),);
+               
+
+                const data = await getDocs(query(teachersCollectionRef, where('userId', '==', 'zZfRakIcCBbEkW46oFNp1Xav17r2')))
+
+            
+                const filteredData = data.docs.map((doc) => (
+                    {
+                        ...doc.data(),
+                        id: doc.id
+                    }
+                ))
+
+                setProfile(filteredData)
+
+
+            } catch (err) {
+                console.log('error')
+                console.log(err)
+            }
+        })();
+
+
         //HOLIDAYS
         (async () => {
             try {
 
                 const holidaysCollectionRef = await query(collection(db, `holidays-2024-2025`),);
 
-                  const data = await getDocs(query(holidaysCollectionRef,))
+                const data = await getDocs(query(holidaysCollectionRef,))
 
                 //await getDocs(teachersCollectionRef)
-            
+
                 const filteredData = data.docs.map((doc) => (
-                  {
-                    ...doc.data(),
-                    id: doc.id
-                  }
+                    {
+                        ...doc.data(),
+                        id: doc.id
+                    }
                 ))
-            
-                filteredData.map((item) => {
-                    setGetHolidays(item)
-                  //console.log(item)
-                });
+
+                //filteredData.map((item) => {
+                setGetHolidays(filteredData)
+                //console.log(item)
+                //});
 
 
 
@@ -158,20 +282,36 @@ export default function AttendanceView({ params }) {
         (async () => {
             try {
                 const attendanceReportCollectionRef = await query(collection(db, `attendance-user-${loginUser.uid}-month-${new Date().getMonth() + 1}-year-${new Date().getFullYear()}`), where('month', '==', 5));
-                setGetAttendance(attendanceReportCollectionRef)
+
+                const data = await getDocs(query(attendanceReportCollectionRef,))
+
+                //await getDocs(teachersCollectionRef)
+
+                const filteredData = data.docs.map((doc) => (
+                    {
+                        ...doc.data(),
+                        id: doc.id
+                    }
+                ))
+
+                setGetAttendance(filteredData)
+
             } catch (err) {
                 console.log('error')
                 console.log(err)
             }
         })();
 
+
+
     }, []);
 
 
-   
+
 
     //console.log(getAttendance)
-console.log(getHolidays)
+    //console.log(getHolidays)
+
 
     return (
         <>
@@ -186,52 +326,11 @@ console.log(getHolidays)
             {loading &&
 
                 <>
-                    <div className="bg-white  px-6 py-5">
+                    <div className="bg-white h-screen  px-6 py-5">
                         <Header type="page-header" title={`ഹാജർ പട്ടിക ${dateMalayalam(month)} ${new Date().getFullYear()}`} />
                         <div className="grid items-start px-6 py-5">
-
-
-
                             <ul className="p-0 m-0 number text-sm uppercase">
-                                {allDays()}
-                                {/* <li className="flex justify-start items-center gap-5"> */}
-                                    {/* <span className="bg-sky-400 border border-sky-400 text-white rounded-full p-2 w-10 h-9 flex justify-center">1</span> */}
-                                    {/* <span className="flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-blue-800 font-semibold"> */}
-                                        {/* <span> */}
-                                            {/* IN 7.02 */}
-                                        {/* </span> */}
-                                        {/* <span> */}
-                                            {/* OUT 8.35 */}
-                                        {/* </span> */}
-                                    {/* </span> */}
-                                {/* </li> */}
-                                {/* <li className="flex justify-start items-center gap-5"> */}
-                                    {/* <span className="bg-white border-sky-400 border text-sky-400 rounded-full p-2 w-10 h-9 flex justify-center">1</span> */}
-                                    {/* <span className="flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-blue-800 font-semibold"> */}
-                                        {/* <span> */}
-                                            {/* HOLIDAY - Holiday Name */}
-                                        {/* </span> */}
-                                    {/* </span> */}
-                                {/* </li> */}
-                                {/* <li className="flex justify-start items-center gap-5"> */}
-                                    {/* <span className="border-red-500 border bg-red-500 text-white rounded-full p-2 w-10 h-9 flex justify-center">1</span> */}
-                                    {/* <span className="flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-red-500 font-semibold"> */}
-                                        {/* <span> */}
-                                            {/* ABSENT */}
-                                        {/* </span> */}
-                                    {/* </span> */}
-                                {/* </li> */}
-                                {/* <li className="flex justify-start items-center gap-5"> */}
-                                    {/* <span className="bg-yellow-400 border border-yellow-400 text-white rounded-full p-2 w-10 h-9 flex justify-center">1</span> */}
-                                    {/* <span className="flex justify-between items-center w-full border-b-gray-100 border-b-2 py-4  text-yellow-400 font-semibold"> */}
-                                        {/* <span> */}
-                                            {/* IN 7.02 */}
-                                        {/* </span> */}
-                                        {/* <span> */}
-                                            {/* OUT 8.35 - EPO */}
-                                        {/* </span> */}
-                                    {/* </span> */}
-                                {/* <!~~ </li> ~~> */}
+                                {attendanceTable(getHolidays)}
                             </ul>
                         </div>
                         <div className="fixed bottom-0 left-0 right-0 bg-white flex justify-start items-center gap-5 p-4 text-blue-800 font-semibold">
@@ -239,7 +338,7 @@ console.log(getHolidays)
                                 ജനുവരി മാസത്തെ ശമ്പളം
                             </span>
                             <span className="number block text-end">
-                                ₹3867
+                                ₹{totalSalary} 
                             </span>
                         </div>
                     </div>

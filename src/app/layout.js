@@ -1,7 +1,7 @@
 
 import "../../public/styles/theme.min.css";
 import { UserContextProvider } from "../app/Context/userContext";
-import { TeacherContextProvider } from "../app/Context/teacherContext";
+import { ProfileContextProvider } from "./Context/profileContext";
 import { RouteGuardContextProvider } from "../app/Context/RouteGuardContext";
 
 
@@ -17,9 +17,9 @@ export default function RootLayout({ children }) {
         <main>
           <RouteGuardContextProvider>
             <UserContextProvider>
-              <TeacherContextProvider>
+              <ProfileContextProvider>
                 {children}
-              </TeacherContextProvider>
+              </ProfileContextProvider>
             </UserContextProvider>
           </RouteGuardContextProvider>
         </main>

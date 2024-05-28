@@ -94,6 +94,7 @@ export default function Punching({ user }) {
             date: new Date().toLocaleDateString(),
             month: new Date().getMonth() + 1,
             year: new Date().getFullYear(),
+            day: new Date().getDate(),
             punchIn: `${hoursIST}:${minutesIST}`,
             punchOut: null,
             status: 'punchin',
@@ -151,6 +152,7 @@ export default function Punching({ user }) {
           console.log(err)
         }
 
+        
 
 
       } else if (
@@ -161,6 +163,8 @@ export default function Punching({ user }) {
 
   }
 
+
+ 
 
   useEffect(() => {
     getPunchStatus()
@@ -174,7 +178,7 @@ export default function Punching({ user }) {
   return (
     <>
 
-      {punchStatus.status == null ? <div className="bg-white rounded-xl p-6 grid gap-4 ">
+      {punchStatus.status == null && startTime <= 7 && endTime >= 8 ? <div className="bg-white rounded-xl p-6 grid gap-4 ">
         <p className="text-base">തങ്ങളുടെ അകത്തോട്ട് ഉള്ള ഹാജർ രേഖപ്പെടുത്തുക  </p>
         <button className="w-full bg-sky-400 hover:bg-sky-500 active:bg-sky-500 rounded-md p-4 text-white font-bold text-lg transition-all" onClick={() => readyIn()}>അകത്തേക്ക്</button>
       </div> : null}
